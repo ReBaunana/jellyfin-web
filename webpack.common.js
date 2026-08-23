@@ -16,7 +16,7 @@ const Assets = [
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.js',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.wasm',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker-legacy.js',
-    'pdfjs-dist/build/pdf.worker.js',
+    'pdfjs-dist/build/pdf.worker.mjs',
     'libpgs/dist/libpgs.worker.js'
 ];
 
@@ -293,7 +293,6 @@ const config = {
             {
                 test: /\.js$/,
                 include: [
-                    path.resolve(__dirname, 'node_modules/pdfjs-dist'),
                     path.resolve(__dirname, 'node_modules/xmldom')
                 ],
                 use: [{

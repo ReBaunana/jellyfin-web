@@ -214,13 +214,13 @@ export class PdfPlayer {
             const downloadHref = getLibraryApi(api).getDownloadUrl({ itemId: item.Id });
 
             this.bindEvents();
-            GlobalWorkerOptions.workerSrc = appRouter.baseUrl() + '/libraries/pdf.worker.js';
+            GlobalWorkerOptions.workerSrc = appRouter.baseUrl() + '/libraries/pdf.worker.mjs';
 
+            // Note: the isEvalSupported option (previously disabled here to mitigate
+            // https://github.com/mozilla/pdf.js/security/advisories/GHSA-wgrm-67xf-hhpq)
+            // was removed from PDF.js; eval-based rendering was dropped entirely upstream.
             const downloadTask = getDocument({
-                url: downloadHref,
-                // Disable for PDF.js XSS vulnerability
-                // https://github.com/mozilla/pdf.js/security/advisories/GHSA-wgrm-67xf-hhpq
-                isEvalSupported: false
+                url: downloadHref
             });
             return downloadTask.promise.then(book => {
                 if (this.cancellationToken) return;
