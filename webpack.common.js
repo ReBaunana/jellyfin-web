@@ -221,6 +221,7 @@ const config = {
                     path.resolve(__dirname, 'node_modules/compare-versions'),
                     path.resolve(__dirname, 'node_modules/date-fns'),
                     path.resolve(__dirname, 'node_modules/dom7'),
+                    path.resolve(__dirname, 'node_modules/dompurify'),
                     path.resolve(__dirname, 'node_modules/epubjs'),
                     path.resolve(__dirname, 'node_modules/flv.js'),
                     path.resolve(__dirname, 'node_modules/highlight-words'),
