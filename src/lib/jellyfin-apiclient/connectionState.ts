@@ -1,7 +1,7 @@
 /**
  * Server state values for a connected server used by jellyfin-apiclient.
  */
-export const enum ConnectionState {
+export enum ConnectionState {
     SignedIn = 'SignedIn',
     ServerMismatch = 'ServerMismatch',
     ServerSignIn = 'ServerSignIn',

@@ -1,6 +1,17 @@
 <h1 align="center">Jellyfin Web</h1>
 <h3 align="center">Part of the <a href="https://jellyfin.org">Jellyfin Project</a></h3>
 
+## Fork dependency maintenance
+
+This is a reference fork, not the source of the deployed official Jellyfin image.
+`npm run build:es-check` still checks application bundles as ES5. PDF.js's copied
+ESM worker and WebAssembly companion modules are checked separately as ES2022;
+they require a browser with ESM/WebAssembly support. The existing module-loading
+polyfill handles vendor imports deliberately excluded from webpack bundling.
+Dependency audits and compatibility checks are separate gates; do not disable
+either to make an upgrade pass. Test server MIME types and browser PDF rendering
+before deploying this client with a Jellyfin server.
+
 ---
 
 <p align="center">

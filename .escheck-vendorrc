@@ -1,0 +1,5 @@
+{
+  "ecmaVersion": "es2022",
+  "module": true,
+  "files": "./dist/libraries/pdf.worker.mjs,./dist/libraries/pdfjs/wasm/*.js"
+}

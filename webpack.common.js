@@ -2,7 +2,6 @@ const fg = require('fast-glob');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { DefinePlugin, IgnorePlugin } = require('webpack');
@@ -16,7 +15,7 @@ const Assets = [
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.js',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.wasm',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker-legacy.js',
-    'pdfjs-dist/build/pdf.worker.js',
+    'pdfjs-dist/legacy/build/pdf.worker.mjs',
     'libpgs/dist/libpgs.worker.js'
 ];
 
@@ -85,6 +84,10 @@ const config = {
                 },
                 'config.json',
                 'robots.txt',
+                ...['cmaps', 'standard_fonts', 'wasm'].map(directory => ({
+                    from: path.resolve(__dirname, `node_modules/pdfjs-dist/${directory}`),
+                    to: `libraries/pdfjs/${directory}`
+                })),
                 {
                     from: 'touchicon*.png',
                     context: path.resolve(__dirname, 'node_modules/@jellyfin/ux-web/favicons'),
@@ -103,11 +106,6 @@ const config = {
         new IgnorePlugin({
             resourceRegExp: /worker-bundle\.js$/,
             contextRegExp: /libarchive.js/
-        }),
-        new ForkTsCheckerWebpackPlugin({
-            typescript: {
-                configFile: path.resolve(__dirname, 'tsconfig.json')
-            }
         }),
         new MiniCssExtractPlugin({
             filename: pathData => {
@@ -186,6 +184,22 @@ const config = {
     module: {
         rules: [
             {
+                // Normalize optional chains before Babel 7 lowers PDF.js class
+                // fields; combining both visitors can corrupt a block scope.
+                test: /\.mjs$/,
+                include: path.resolve(__dirname, 'node_modules/pdfjs-dist'),
+                enforce: 'pre',
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        configFile: false,
+                        babelrc: false,
+                        compact: true,
+                        plugins: ['@babel/plugin-transform-optional-chaining']
+                    }
+                }]
+            },
+            {
                 test: /\.(html)$/,
                 use: {
                     loader: 'html-loader'
@@ -207,7 +221,6 @@ const config = {
                     path.resolve(__dirname, 'node_modules/@react-hook/latest'),
                     path.resolve(__dirname, 'node_modules/@react-hook/passive-layout-effect'),
                     path.resolve(__dirname, 'node_modules/@react-hook/resize-observer'),
-                    path.resolve(__dirname, 'node_modules/@remix-run/router'),
                     path.resolve(__dirname, 'node_modules/@tanstack/match-sorter-utils'),
                     path.resolve(__dirname, 'node_modules/@tanstack/query-core'),
                     path.resolve(__dirname, 'node_modules/@tanstack/react-query'),
@@ -221,6 +234,7 @@ const config = {
                     path.resolve(__dirname, 'node_modules/compare-versions'),
                     path.resolve(__dirname, 'node_modules/date-fns'),
                     path.resolve(__dirname, 'node_modules/dom7'),
+                    path.resolve(__dirname, 'node_modules/dompurify'),
                     path.resolve(__dirname, 'node_modules/epubjs'),
                     path.resolve(__dirname, 'node_modules/flv.js'),
                     path.resolve(__dirname, 'node_modules/highlight-words'),
@@ -229,11 +243,13 @@ const config = {
                     path.resolve(__dirname, 'node_modules/markdown-it'),
                     path.resolve(__dirname, 'node_modules/material-react-table'),
                     path.resolve(__dirname, 'node_modules/mdurl'),
+                    path.resolve(__dirname, 'node_modules/pdfjs-dist'),
                     path.resolve(__dirname, 'node_modules/proxy-polyfill'),
                     path.resolve(__dirname, 'node_modules/punycode'),
                     path.resolve(__dirname, 'node_modules/react-blurhash'),
                     path.resolve(__dirname, 'node_modules/react-lazy-load-image-component'),
                     path.resolve(__dirname, 'node_modules/react-router'),
+                    path.resolve(__dirname, 'node_modules/react-router-dom'),
                     path.resolve(__dirname, 'node_modules/remove-accents'),
                     path.resolve(__dirname, 'node_modules/screenfull'),
                     path.resolve(__dirname, 'node_modules/ssr-window'),
@@ -245,7 +261,8 @@ const config = {
                     loader: 'babel-loader',
                     options: {
                         cacheCompression: false,
-                        cacheDirectory: true
+                        cacheDirectory: true,
+                        plugins: [path.resolve(__dirname, 'babel-legacy-external-import.js')]
                     }
                 }]
             },
@@ -274,7 +291,7 @@ const config = {
                     {
                         loader: 'ts-loader',
                         options: {
-                            transpileOnly: true
+                            transpileOnly: false
                         }
                     }
                 ]
@@ -285,7 +302,7 @@ const config = {
                 use: [{
                     loader: 'ts-loader',
                     options: {
-                        transpileOnly: true
+                        transpileOnly: false
                     }
                 }]
             },
@@ -293,8 +310,7 @@ const config = {
             {
                 test: /\.js$/,
                 include: [
-                    path.resolve(__dirname, 'node_modules/pdfjs-dist'),
-                    path.resolve(__dirname, 'node_modules/xmldom')
+                    path.resolve(__dirname, 'node_modules/@xmldom/xmldom')
                 ],
                 use: [{
                     loader: 'babel-loader',

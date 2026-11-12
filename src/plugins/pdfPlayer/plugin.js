@@ -209,18 +209,20 @@ export class PdfPlayer {
             }
         };
 
-        return import('pdfjs-dist').then(({ GlobalWorkerOptions, getDocument }) => {
+        return import('pdfjs-dist/legacy/build/pdf.mjs').then(({ GlobalWorkerOptions, getDocument }) => {
             const api = toApi(ServerConnections.getApiClient(item));
             const downloadHref = getLibraryApi(api).getDownloadUrl({ itemId: item.Id });
 
             this.bindEvents();
-            GlobalWorkerOptions.workerSrc = appRouter.baseUrl() + '/libraries/pdf.worker.js';
+            const libraryUrl = appRouter.baseUrl() + '/libraries/';
+            GlobalWorkerOptions.workerSrc = libraryUrl + 'pdf.worker.mjs';
 
             const downloadTask = getDocument({
                 url: downloadHref,
-                // Disable for PDF.js XSS vulnerability
-                // https://github.com/mozilla/pdf.js/security/advisories/GHSA-wgrm-67xf-hhpq
-                isEvalSupported: false
+                cMapUrl: libraryUrl + 'pdfjs/cmaps/',
+                cMapPacked: true,
+                standardFontDataUrl: libraryUrl + 'pdfjs/standard_fonts/',
+                wasmUrl: libraryUrl + 'pdfjs/wasm/'
             });
             return downloadTask.promise.then(book => {
                 if (this.cancellationToken) return;
@@ -309,10 +311,8 @@ export class PdfPlayer {
                 canvas.style.width = 'auto';
             }
 
-            const context = canvas.getContext('2d');
-
             const renderContext = {
-                canvasContext: context,
+                canvas: canvas,
                 viewport: viewport
             };
 
