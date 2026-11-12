@@ -44,11 +44,11 @@ export const Component = () => {
     const startTask = useStartTask();
 
     const navigateToSchedulesDirect = useCallback(() => {
-        navigate('/dashboard/livetv/guide?type=schedulesdirect');
+        void navigate('/dashboard/livetv/guide?type=schedulesdirect');
     }, [ navigate ]);
 
     const navigateToXMLTV = useCallback(() => {
-        navigate('/dashboard/livetv/guide?type=xmltv');
+        void navigate('/dashboard/livetv/guide?type=xmltv');
     }, [ navigate ]);
 
     const showProviderMenu = useCallback(() => {

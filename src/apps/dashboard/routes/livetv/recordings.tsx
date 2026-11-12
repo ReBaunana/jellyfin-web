@@ -172,7 +172,7 @@ export const Component = () => {
     const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (config) {
-            submit(
+            void submit(
                 JSON.stringify(config),
                 { method: 'post', encType: 'application/json' }
             );
