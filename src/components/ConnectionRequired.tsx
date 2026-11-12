@@ -68,7 +68,7 @@ const ConnectionRequired: FunctionComponent<ConnectionRequiredProps> = ({
         // If we try to navigate to the current route, just set isLoading = false
         if (location.pathname === route) setIsLoading(false);
         // Otherwise navigate to the route
-        else navigate(route);
+        else void navigate(route);
     }, [ location.pathname, navigate ]);
 
     const bounce = useCallback(async (connectionResponse: ConnectResponse) => {
@@ -76,7 +76,7 @@ const ConnectionRequired: FunctionComponent<ConnectionRequiredProps> = ({
             case ConnectionState.SignedIn:
                 // Already logged in, bounce to the home page
                 console.debug('[ConnectionRequired] already logged in, redirecting to home');
-                navigate(BounceRoutes.Home);
+                void navigate(BounceRoutes.Home);
                 return;
             case ConnectionState.ServerSignIn:
                 // Bounce to the login page
@@ -85,7 +85,7 @@ const ConnectionRequired: FunctionComponent<ConnectionRequiredProps> = ({
                 } else {
                     console.debug('[ConnectionRequired] not logged in, redirecting to login page', location);
                     const url = encodeURIComponent(location.pathname + location.search);
-                    navigate(`${BounceRoutes.Login}?serverid=${connectionResponse.ApiClient.serverId()}&url=${url}`);
+                    void navigate(`${BounceRoutes.Login}?serverid=${connectionResponse.ApiClient.serverId()}&url=${url}`);
                 }
                 return;
             case ConnectionState.ServerSelection:
@@ -108,7 +108,7 @@ const ConnectionRequired: FunctionComponent<ConnectionRequiredProps> = ({
         const systemInfo = await fetchPublicSystemInfo(apiClient);
         if (systemInfo?.StartupWizardCompleted) {
             console.info('[ConnectionRequired] startup wizard is complete, redirecting home');
-            navigate(BounceRoutes.Home);
+            void navigate(BounceRoutes.Home);
             return;
         }
 
@@ -128,7 +128,7 @@ const ConnectionRequired: FunctionComponent<ConnectionRequiredProps> = ({
                     ServerConnections.setLocalApiClient(firstConnection.ApiClient);
                     // Bounce to the wizard
                     console.info('[ConnectionRequired] startup wizard is not complete, redirecting there');
-                    navigate(BounceRoutes.StartWizard);
+                    void navigate(BounceRoutes.StartWizard);
                     return;
                 }
             } catch (ex) {

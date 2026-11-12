@@ -249,7 +249,7 @@ const Profile = ({ userDto }: ProfileProps) => {
                         }, {
                             onSuccess: () => {
                                 loading.hide();
-                                navigate('/dashboard/users', {
+                                void navigate('/dashboard/users', {
                                     state: { openSavedToast: true }
                                 });
                             }

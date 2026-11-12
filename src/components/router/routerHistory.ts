@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Router, RouterState } from '@remix-run/router';
-import type { History, Listener, To } from 'history';
+import type { createHashRouter, RouterState } from 'react-router-dom';
+import { Action, type History, type Listener, type To } from 'history';
 
 import Events, { type Event } from 'utils/events';
 
 const HISTORY_UPDATE_EVENT = 'HISTORY_UPDATE';
+type Router = ReturnType<typeof createHashRouter>;
+const HISTORY_ACTIONS = { POP: Action.Pop, PUSH: Action.Push, REPLACE: Action.Replace };
 
 export class RouterHistory implements History {
     _router: Router;
@@ -22,7 +24,7 @@ export class RouterHistory implements History {
     }
 
     get action() {
-        return this._router.state.historyAction;
+        return HISTORY_ACTIONS[this._router.state.historyAction];
     }
 
     get location() {
@@ -57,7 +59,7 @@ export class RouterHistory implements History {
 
     listen(listener: Listener) {
         const compatListener = (_e: Event, state: RouterState) => {
-            return listener({ action: state.historyAction, location: state.location });
+            return listener({ action: HISTORY_ACTIONS[state.historyAction], location: state.location });
         };
 
         Events.on(document, HISTORY_UPDATE_EVENT, compatListener);

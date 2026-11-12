@@ -31,7 +31,7 @@ export const ForgotPasswordPage = () => {
         },
         onSuccess: (result) => {
             let msg = '';
-            let callback: () => void | undefined = () => undefined;
+            let callback: () => void | Promise<void> = () => undefined;
 
             switch (result.Action) {
                 case ForgotPasswordAction.ContactAdmin:
@@ -57,13 +57,13 @@ export const ForgotPasswordPage = () => {
                 text: msg,
                 title: globalize.translate('ButtonForgotPassword')
             }).then(() => {
-                if (callback) callback();
+                return callback();
             });
         }
     });
 
     const handleCancel = useCallback(() => {
-        navigate(-1);
+        return navigate(-1);
     }, [navigate]);
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {

@@ -22,7 +22,7 @@ export const Component = () => {
     const { data: user, isPending, isError } = useUser(userId ? { userId: userId } : undefined);
 
     const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: UserTab) => {
-        navigate(`/dashboard/users/${userId}/${newValue}`);
+        void navigate(`/dashboard/users/${userId}/${newValue}`);
     }, [ navigate ]);
 
     if (isPending) return <Loading />;

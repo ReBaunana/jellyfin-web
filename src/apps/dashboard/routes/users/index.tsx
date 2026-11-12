@@ -88,15 +88,15 @@ const UserProfiles = () => {
                     callback: function (id: string) {
                         switch (id) {
                             case 'open':
-                                navigate(`/dashboard/users/${userId}/${UserTab.Profile}`);
+                                void navigate(`/dashboard/users/${userId}/${UserTab.Profile}`);
                                 break;
 
                             case 'access':
-                                navigate(`/dashboard/users/${userId}/${UserTab.Access}`);
+                                void navigate(`/dashboard/users/${userId}/${UserTab.Access}`);
                                 break;
 
                             case 'parentalcontrol':
-                                navigate(`/dashboard/users/${userId}/${UserTab.ParentalControl}`);
+                                void navigate(`/dashboard/users/${userId}/${UserTab.ParentalControl}`);
                                 break;
 
                             case 'delete':
@@ -138,7 +138,7 @@ const UserProfiles = () => {
         };
 
         const onAddUserClick = function() {
-            navigate('/dashboard/users/add');
+            void navigate('/dashboard/users/add');
         };
 
         page.addEventListener('click', onPageClick);

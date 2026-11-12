@@ -2,7 +2,8 @@
     "ecmaVersion": "es5",
     "files": "./dist/**/*.js",
     "not": [
-        "./dist/libraries/pdf.worker.js",
+        "./dist/libraries/pdf.worker.mjs",
+        "./dist/libraries/pdfjs/wasm/*.js",
         "./dist/libraries/worker-bundle.js",
         "./dist/serviceworker.js"
     ]
