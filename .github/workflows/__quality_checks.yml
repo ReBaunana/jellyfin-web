@@ -57,5 +57,11 @@ jobs:
       - name: Install dependencies 📦
         run: npm ci --no-audit
 
+      - name: Validate complete lock dependency graph
+        if: matrix.command == 'build:check'
+        run: |
+          npm sbom --sbom-format cyclonedx --package-lock-only \
+            --include=dev --include=optional --include=peer > /tmp/jellyfin-lock-sbom.json
+
       - name: Run ${{ matrix.command }} ⚙️
         run: npm run ${{ matrix.command }}
